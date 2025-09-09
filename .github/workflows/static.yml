@@ -41,3 +41,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        # _config.yml for GitHub Pages
+
+title: Health Management System
+description: My project hosted on GitHub Pages
+baseurl: "" # leave empty if deploying from root
+url: ""     # GitHub will fill this automatically
+
+# Prevent Jekyll from processing SCSS
+exclude:
+  - assets/css/style.scss
+
+# Build settings
+markdown: kramdown
+theme: minima
+
