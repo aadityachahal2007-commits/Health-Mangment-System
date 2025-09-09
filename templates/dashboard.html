@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Dashboard</title>
+<style>
+/* --- NEW CSS FOR PARTICLES --- */
+#tsparticles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+:root {
+    --background-color: #1c2023;
+    --text-color: #fbf2f2;
+    --heading-color: #00bcd4;
+    --container-bg: #2d3237;
+    --border-color: #3b444b;
+    --highlight-color: #ff5722;
+    --success-color: #4caf50;
+    --error-color: #e53935;
+    --table-header-bg: #3b444b;
+    --table-row-even: #2d3237;
+    --table-row-hover: #3b444b;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    transition: color 0.5s;
+}
+
+.table-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 30px;
+    /* --- MODIFIED CSS --- */
+    background: rgba(45, 50, 55, 0.85); /* Semi-transparent background */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 68, 75, 0.5); /* var(--border-color) with alpha */
+    position: relative; /* To lift it above the particles */
+    z-index: 1;
+    /* --- End of Modification --- */
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.5s;
+}
+
+/* ... rest of your existing CSS ... */
+h1, h2 { color: var(--heading-color); text-align: center; margin-bottom: 20px; font-weight: 600; }
+.alert { padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 8px; }
+.alert-success { color: var(--success-color); background-color: #2e5c3e; border-color: #3a754e; }
+.alert-error { color: var(--error-color); background-color: #6a3a3a; border-color: #924b4b; }
+.action-links-top { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+.action-links-top a, .logout-link, .action-link { display: inline-block; padding: 10px 20px; background-color: var(--highlight-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.3s, transform 0.2s; }
+.action-links-top a:hover, .logout-link:hover, .action-link:hover { background-color: #ff7043; transform: translateY(-2px); }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+thead { background-color: var(--table-header-bg); color: var(--heading-color); }
+th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+th { font-weight: 600; }
+tbody tr:nth-child(even) { background-color: var(--table-row-even); }
+tbody tr:hover { background-color: var(--table-row-hover); }
+.action-buttons { display: flex; gap: 8px; }
+.action-buttons a, .action-buttons button { padding: 6px 12px; border: none; border-radius: 6px; color: white; text-decoration: none; cursor: pointer; font-size: 0.875rem; transition: background-color 0.3s; }
+.action-buttons a { background-color: #00bcd4; }
+.action-buttons a:hover { background-color: #0097a7; }
+.action-buttons button { background-color: #e53935; }
+.action-buttons button:hover { background-color: #d32f2f; }
+.bottom-links { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 15px; }
+.logout-link { background-color: #4a5568; }
+.logout-link:hover { background-color: #3b4455; }
+</style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+
+    <div class="table-container">
+        <h1>Health Records Dashboard</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="action-links-top">
+            {% if role == 'admin' or role == 'doctor' %}
+              <a href="{{ url_for('add_record') }}">Add New Record</a>
+              {% if role == 'admin' %}
+                  <a href="{{ url_for('create_user') }}">Create New User</a>
+              {% endif %}
+            {% endif %}
+        </div>
+        
+        <h2>Patient Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Origin</th>
+                    <th>Status</th>
+                    <th>Last Checkup</th>
+                    <th>Prescribed By</th>
+                    <th>Prescription Date</th>
+                    {% if role in ('admin', 'doctor') %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.name }}</td>
+                    <td>{{ record.age }}</td>
+                    <td>{{ record.gender }}</td>
+                    <td>{{ record.origin }}</td>
+                    <td>{{ record.health_status }}</td>
+                    <td>{{ record.last_checkup_date }}</td>
+                    <td>{{ record.doctor_name or 'N/A' }}</td>
+                    <td>{{ record.prescription_date or 'N/A' }}</td>
+                    {% if role in ('admin', 'doctor') %}
+                        <td class="action-buttons">
+                            <a href="{{ url_for('edit_record', id=record.id) }}">Edit</a>
+                            {% if role == 'admin' %}
+                                <form method="post" action="{{ url_for('delete_record', id=record.id) }}" style="display:inline;">
+                                    <button type="submit" onclick="return confirm('Are you sure?');">Delete</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9">No records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if role == 'admin' %}
+            <div class="doctors-list">
+                <h2>Doctors</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doctor in doctors %}
+                            <tr>
+                                <td>{{ doctor.id }}</td>
+                                <td>{{ doctor.username }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="2">No doctors found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+        {% endif %}
+        
+        <div class="bottom-links">
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+            {% if role == 'patient' %}
+                <a href="{{ url_for('change_password') }}" class="action-link">Change Password</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // A more subtle configuration for internal pages
+            tsParticles.load("tsparticles", {
+                background: {
+                    color: {
+                        value: '#1c2023'
+                    }
+                },
+                fpsLimit: 60,
+                particles: {
+                    color: {
+                        value: '#00bcd4'
+                    },
+                    links: {
+                        color: '#3b444b',
+                        distance: 150,
+                        enable: true,
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        direction: 'none',
+                        enable: true,
+                        outModes: {
+                            default: 'bounce'
+                        },
+                        random: false,
+                        speed: 1,
+                        straight: false
+                    },
+                    number: {
+                        density: {
+                            enable: true,
+                            area: 800
+                        },
+                        value: 40
+                    },
+                    opacity: {
+                        value: 0.3
+                    },
+                    shape: {
+                        type: 'circle'
+                    },
+                    size: {
+                        value: { min: 1, max: 3 }
+                    }
+                },
+                detectRetina: true
+            });
+        });
+    </script>
+</body>
+</html>

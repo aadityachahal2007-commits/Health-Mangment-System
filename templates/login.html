@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login - Migrant Health Records</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            /* The background will now be controlled by the tsParticles config */
+        }
+        
+        /* --- NEW CSS FOR PARTICLES --- */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        body.dark-mode { color: #f7fafc; }
+        
+        .hero-section {
+            width: 100%;
+            height: 45vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            /* Removed background image to let particles show through */
+            background: transparent;
+            animation: fadeIn 1.5s ease-out;
+            margin-bottom: 20px;
+            position: relative; /* To ensure it's above the particles */
+            z-index: 1;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 8px; 
+            animation: fadeIn 1s ease-out;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero-subtitle {
+            font-size: 1.3rem;
+            max-width: 700px;
+            animation: fadeIn 1.5s ease-out;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .hero-divider {
+            width: 100px;
+            height: 4px;
+            background: #007bff;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            animation: lineDraw 1.8s ease-out;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1); /* Made more transparent */
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.8s ease-out forwards;
+            transition: background-color 0.5s, box-shadow 0.5s;
+            margin-bottom: 40px;
+            position: relative; /* To ensure it's above the particles */
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body.dark-mode .login-container {
+            background: rgba(45, 55, 72, 0.75);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-container h2 {
+            color: #f7fafc; /* Changed to white to be visible on dark bg */
+            margin-bottom: 25px;
+            font-weight: 600;
+            transition: color 0.5s;
+        }
+        body.dark-mode .login-container h2 { color: #f7fafc; }
+
+        input[type="text"], input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 12px 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #f7fafc;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        input::placeholder { color: #ddd; }
+        body.dark-mode input[type="text"], body.dark-mode input[type="password"] {
+            background-color: #4a5568;
+            border-color: #2d3748;
+            color: #f7fafc;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover { background: #0056b3; transform: translateY(-2px); }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 10;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        body.dark-mode .dark-mode-toggle {
+            background: #2d3748;
+            border-color: #4a5568;
+            color: #fff;
+        }
+
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes lineDraw { from { width: 0; } to { width: 100px; } }
+    </style>
+</head>
+<body class="{{ 'dark-mode' if theme == 'dark' else '' }}">
+    <div id="tsparticles"></div>
+
+    <div class="hero-section">
+        <h1 class="hero-title">Migrant Health Records System</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">Securely managing health data for a better future.</p>
+    </div>
+
+    <div class="login-container">
+        <h2>Admin Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <form method="post">
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <a href="{{ url_for('toggle_theme') }}" class="dark-mode-toggle">{{ '🌙' if theme == 'dark' else '☀️' }}</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            tsParticles.load("tsparticles", {
+                background: {
+                    color: {
+                        value: '#1a202c' // Dark blue background
+                    }
+                },
+                fpsLimit: 60,
+                interactivity: {
+                    events: {
+                        onHover: {
+                            enable: true,
+                            mode: 'grab' // Changed for a different effect
+                        },
+                        onClick: {
+                            enable: true,
+                            mode: 'push'
+                        }
+                    },
+                    modes: {
+                        grab: {
+                            distance: 140,
+                            links: {
+                                opacity: 1
+                            }
+                        },
+                        push: {
+                            quantity: 4
+                        }
+                    }
+                },
+                particles: {
+                    color: {
+                        value: '#00bcd4' // Cyan color for particles
+                    },
+                    links: {
+                        color: '#ffffff',
+                        distance: 150,
+                        enable: true,
+                        opacity: 0.5,
+                        width: 1
+                    },
+                    collisions: {
+                        enable: true
+                    },
+                    move: {
+                        direction: 'none',
+                        enable: true,
+                        outModes: {
+                            default: 'bounce'
+                        },
+                        random: false,
+                        speed: 2,
+                        straight: false
+                    },
+                    number: {
+                        density: {
+                            enable: true,
+                            area: 800
+                        },
+                        value: 80
+                    },
+                    opacity: {
+                        value: 0.5
+                    },
+                    shape: {
+                        type: 'circle'
+                    },
+                    size: {
+                        value: { min: 1, max: 5 }
+                    }
+                },
+                detectRetina: true
+            });
+        });
+    </script>
+</body>
+</html>

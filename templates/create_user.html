@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Create New User</title>
+    <style>
+        /* --- NEW CSS FOR PARTICLES --- */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        :root {
+            --background-color: #1c2023;
+            --text-color: #fbf2f2;
+            --heading-color: #00bcd4;
+            --container-bg: #2d3237;
+            --border-color: #3b444b;
+            --highlight-color: #ff5722;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: color 0.5s;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            /* --- MODIFIED CSS --- */
+            background: rgba(45, 50, 55, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 68, 75, 0.5);
+            position: relative;
+            z-index: 1;
+            /* --- End of Modification --- */
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.5s, box-shadow 0.5s;
+        }
+
+        h2 { color: var(--heading-color); text-align: center; margin-bottom: 25px; font-weight: 600; }
+        input[type="text"], input[type="password"], select { width: calc(100% - 22px); padding: 12px 10px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 8px; box-sizing: border-box; background-color: #242e47; color: var(--text-color); transition: border-color 0.3s, box-shadow 0.3s, background-color 0.5s, color 0.5s; }
+        input[type="text"]:focus, input[type="password"]:focus, select:focus { border-color: var(--highlight-color); box-shadow: 0 0 0 0.2rem rgba(255, 87, 34, 0.25); outline: none; }
+        button { width: 100%; padding: 12px; background: var(--highlight-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 500; margin-top: 20px; transition: background-color 0.3s, transform 0.2s; }
+        button:hover { background: #ff7043; transform: translateY(-2px); }
+        .back-link { display: block; margin-top: 20px; text-align: center; text-decoration: none; color: var(--text-color); font-weight: 500; transition: color 0.3s; }
+        .back-link:hover { color: var(--heading-color); text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div id="tsparticles"></div>
+
+    <div class="form-container">
+        <h2>Create New User</h2>
+        <form method="post">
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <select name="role">
+                <option value="" disabled selected>Select Role</option>
+                <option value="admin">Admin</option>
+                <option value="doctor">Doctor</option>
+                <option value="patient">Patient</option>
+            </select>
+            <button type="submit">Create User</button>
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="back-link">Back to Dashboard</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            tsParticles.load("tsparticles", {
+                background: { color: { value: '#1c2023' } },
+                fpsLimit: 60,
+                particles: {
+                    color: { value: '#00bcd4' },
+                    links: { color: '#3b444b', distance: 150, enable: true, opacity: 0.2, width: 1 },
+                    move: { direction: 'none', enable: true, outModes: { default: 'bounce' }, random: false, speed: 1, straight: false },
+                    number: { density: { enable: true, area: 800 }, value: 40 },
+                    opacity: { value: 0.3 },
+                    shape: { type: 'circle' },
+                    size: { value: { min: 1, max: 3 } }
+                },
+                detectRetina: true
+            });
+        });
+    </script>
+</body>
+</html>
